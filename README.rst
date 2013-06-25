@@ -40,6 +40,10 @@ Interface
     ``--force``.  All dotfiles are assumed if you do not specify any files to
     this command.
 
+``-u, --unsync [file...]``
+    Remove dotfile symlinks.  All dotfiles are assumed if you do not specify any
+    files to this command.
+
 ``-m, --move <path>``
     Move dotfiles repository to another location, updating all symlinks in the
     process.
