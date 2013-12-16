@@ -309,6 +309,18 @@ class DotfilesTestCase(unittest.TestCase):
                 self.assertFalse(os.path.exists(
                     os.path.join(self.homedir, dotfile)))
 
+    def test_single_unsync(self):
+        """
+        Test unsync of a single dotfile.
+        """
+        self.assertTrue(False)
+
+    def test_full_unsync(self):
+        """
+        Test unsync of all dotfiles in the repository.
+        """
+        self.assertTrue(False)
+
 
     def test_missing_remove(self):
         """Test removing a dotfile that's been removed from the repository."""
