@@ -309,18 +309,6 @@ class DotfilesTestCase(unittest.TestCase):
                 self.assertFalse(os.path.exists(
                     os.path.join(self.homedir, dotfile)))
 
-    def test_single_unsync(self):
-        """
-        Test unsync of a single dotfile.
-        """
-        self.assertTrue(False)
-
-    def test_full_unsync(self):
-        """
-        Test unsync of all dotfiles in the repository.
-        """
-        self.assertTrue(False)
-
 
     def test_missing_remove(self):
         """Test removing a dotfile that's been removed from the repository."""
@@ -420,6 +408,82 @@ class DotfilesTestCase(unittest.TestCase):
 
         expected = os.path.join(expected, "testfile")
         self.assertTrue(os.path.isfile(expected))
+
+
+    def test_single_unsync(self):
+        """
+        Test unsync of a single dotfile.
+        """
+
+        # TODO: really need a initialize_repo() function that sets all this up
+        # without needing to call dotfiles.sync().  Otherwise this is testing
+        # quite a bit more than just one feature.
+
+        all_repo_files = ('foo', 'bar', 'baz')
+
+        for repo_file in all_repo_files:
+            touch(os.path.join(self.repository, repo_file))
+
+        dotfiles = core.Dotfiles(
+                homedir=self.homedir, repository=self.repository,
+                prefix='', ignore=[], externals={}, packages=[],
+                dry_run=False)
+
+        dotfiles.sync()
+        dotfiles.unsync(['.foo'])
+
+        # Make sure the repository is correct
+        self.assertTrue(os.path.exists(
+            os.path.join(self.repository, 'foo')))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.repository, 'bar')))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.repository, 'baz')))
+
+        # This symlink should not be there
+        self.assertFalse(os.path.exists(
+            os.path.join(self.homedir, '.foo')))
+
+        # These symlinks should remain in place
+        self.assertTrue(os.path.exists(
+            os.path.join(self.homedir, '.bar')))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.homedir, '.baz')))
+
+
+    def test_full_unsync(self):
+        """
+        Test unsync of all dotfiles in the repository.
+        """
+
+        all_repo_files = ('foo', 'bar', 'baz')
+
+        for repo_file in all_repo_files:
+            touch(os.path.join(self.repository, repo_file))
+
+        dotfiles = core.Dotfiles(
+                homedir=self.homedir, repository=self.repository,
+                prefix='', ignore=[], externals={}, packages=[],
+                dry_run=False)
+
+        dotfiles.sync()
+        dotfiles.unsync()
+
+        # Make sure the repository is correct
+        self.assertTrue(os.path.exists(
+            os.path.join(self.repository, 'foo')))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.repository, 'bar')))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.repository, 'baz')))
+
+        # These symlinks should not be there
+        self.assertFalse(os.path.exists(
+            os.path.join(self.homedir, '.foo')))
+        self.assertFalse(os.path.exists(
+            os.path.join(self.homedir, '.bar')))
+        self.assertFalse(os.path.exists(
+            os.path.join(self.homedir, '.baz')))
 
 
 if __name__ == '__main__':

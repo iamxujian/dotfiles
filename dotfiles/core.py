@@ -81,6 +81,9 @@ class Dotfile(object):
                 self._remove(self.name)
             self._symlink(self.target, self.name)
 
+    def unsync(self):
+        print("unsync: %s" % self.name)
+
     def add(self):
         if self.status == 'missing':
             print("Skipping \"%s\", file not found" % self.basename)
@@ -204,6 +207,23 @@ class Dotfiles(object):
 
         for dotfile in dotfiles:
             dotfile.sync(force)
+
+    def unsync(self, files=None):
+
+        """Unsynchronize this repository, removing any previously created
+        symlinks."""
+
+        # unless a set of files is specified, operate on all files
+        if not files:
+            dotfiles = self.dotfiles
+        else:
+            files = set(map(lambda x: os.path.join(self.homedir, x), files))
+            dotfiles = [x for x in self.dotfiles if x.name in files]
+            if not dotfiles:
+                raise Exception("file not found")
+
+        for dotfile in dotfiles:
+            dotfile.unsync()
 
     def add(self, files):
         """Add dotfile(s) to the repository."""
