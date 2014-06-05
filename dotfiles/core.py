@@ -140,6 +140,8 @@ class Dotfiles(object):
 
         src_dir = os.path.join(self.repository, sub_dir)
         if sub_dir:
+            if self.prefix:
+                sub_dir = sub_dir[len(self.prefix):]
             # Add a dot to first level of packages
             dst_dir = os.path.join(self.homedir, '.%s' % sub_dir)
         else:
@@ -157,9 +159,12 @@ class Dotfiles(object):
             if pkg_path in self.packages:
                 self._load_recursive(pkg_path)
             else:
-                self.dotfiles.append(Dotfile(dotfile[len(self.prefix):],
-                    os.path.join(src_dir, dotfile), dst_dir,
-                    add_dot=not bool(sub_dir), dry_run=self.dry_run))
+                if not self.prefix:
+                    dotfile = dotfile[len(self.prefix):]
+                self.dotfiles.append(
+                    Dotfile(dotfile, os.path.join(src_dir, dotfile),
+                            dst_dir, add_dot=not bool(sub_dir),
+                            dry_run=self.dry_run))
 
         # Externals are top-level only
         if not sub_dir:
